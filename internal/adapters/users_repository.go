@@ -13,8 +13,8 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 	return &UserRepository{db}
 }
 
-func (r *UserRepository) FindAll() ([]User, error) {
-	var users []User
+func (r *UserRepository) FindAll() ([]*User, error) {
+	var users []*User
 
 	err := r.db.Preload("Roles").Find(&users).Error
 
