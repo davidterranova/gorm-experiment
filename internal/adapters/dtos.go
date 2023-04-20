@@ -36,6 +36,8 @@ type Role struct {
 	CreatedAt time.Time `gorm:"column:created_at"`
 
 	Name string `gorm:"column:name"`
+
+	Users []*User `gorm:"many2many:users_roles;"`
 }
 
 func (Role) TableName() string {

@@ -17,3 +17,11 @@ func (r *RoleRepository) FindByName(name string) (*Role, error) {
 
 	return &role, err
 }
+
+func (r *RoleRepository) FindByNameWithUsers(name string) (*Role, error) {
+	var role Role
+
+	err := r.db.Preload("Users").Where("name = ?", name).First(&role).Error
+
+	return &role, err
+}
