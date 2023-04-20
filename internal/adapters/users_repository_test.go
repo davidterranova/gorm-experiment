@@ -39,7 +39,7 @@ func TestCreate(t *testing.T) {
 		FirstName: "John",
 		LastName:  "Doe",
 		Email:     "jdoe@test.local",
-		Roles:     []adapters.Role{*userRole},
+		Roles:     []*adapters.Role{userRole},
 	}
 
 	_, err = usersRepo.Create(jdoe)
