@@ -20,6 +20,7 @@ services:
       context: ./pkg/pg
     env_file: .env
     environment:
+      # override .env variable to point to postgres container in compose context
       - GORM_EXPERIMENT_DB_HOST=postgres-local
     depends_on:
       - postgres-local
