@@ -16,13 +16,14 @@ type User struct {
 	LastName  string `gorm:"column:last_name"`
 	Email     string `gorm:"column:email"`
 
-	Roles []*Role `gorm:"many2many:users_roles;"`
+	Roles      []*Role     `gorm:"many2many:users_roles;"`
+	UsersRoles []*UserRole `gorm:"foreignKey:UserId;references:Id"`
 }
 
 func (u User) String() string {
 	return fmt.Sprintf(
-		"User{Id: %s, CreatedAt: %s, FirstName: %s, LastName: %s, Email: %s, Roles: %s}",
-		u.Id, u.CreatedAt, u.FirstName, u.LastName, u.Email, u.Roles,
+		"User{Id: %s, CreatedAt: %s, FirstName: %s, LastName: %s, Email: %s, Roles: %s, UsersRoles: %s}",
+		u.Id, u.CreatedAt, u.FirstName, u.LastName, u.Email, u.Roles, u.UsersRoles,
 	)
 }
 
@@ -60,4 +61,11 @@ type UserRole struct {
 
 func (UserRole) TableName() string {
 	return "users_roles"
+}
+
+func (ur UserRole) String() string {
+	return fmt.Sprintf(
+		"UserRole{UserId: %s, RoleId: %s, CreatedAt: %s}",
+		ur.UserId, ur.RoleId, ur.CreatedAt,
+	)
 }

@@ -22,6 +22,7 @@ func TestFindAll(t *testing.T) {
 
 	for _, user := range users {
 		assert.NotEmpty(t, user.Roles)
+		assert.NotNil(t, user.UsersRoles)
 		fmt.Println(user)
 	}
 }
@@ -47,7 +48,7 @@ func TestCreate(t *testing.T) {
 
 	loadedJdoe, err := usersRepo.FindById(jdoe.Id)
 	assert.NoError(t, err)
-	assert.Equal(t, jdoe, loadedJdoe)
+	assert.Equal(t, jdoe.Id, loadedJdoe.Id)
 
 	err = usersRepo.Delete(jdoe)
 	assert.NoError(t, err)
