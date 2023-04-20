@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  postgres-local:
+    image: public.ecr.aws/docker/library/postgres:14.3
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=gorm-experiment
+    ports:
+      - 5432:5432
+    volumes:
+      - ./pkg/pg/bootstrap:/docker-entrypoint-initdb.d
+    command: [ "postgres", "-c", "log_statement=all" ]
+  
+  migrate:
+    build:
+      dockerfile: Dockerfile.dbmigration
+      context: ./pkg/pg
+    env_file: .env
+    environment:
+      - GORM_EXPERIMENT_DB_HOST=postgres-local
+    depends_on:
+      - postgres-local
+    volumes:
+      - ./pkg/pg/migrations:/migrations:ro
+    command: [ "/migrate.sh" ]
