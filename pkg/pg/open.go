@@ -5,6 +5,7 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type DBConfig struct {
@@ -22,5 +23,7 @@ func Open(cfg DBConfig) (*gorm.DB, error) {
 		"host=%s user=%s password=%s dbname=%s port=%d search_path=%s %s",
 		cfg.Host, cfg.Username, cfg.Password, cfg.Name, cfg.Port, cfg.Schema, cfg.Params,
 	)
-	return gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	return gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
 }
