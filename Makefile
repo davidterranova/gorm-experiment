@@ -1,8 +1,11 @@
 
+all: compose-up test compose-down
+
 .PHONY: compose-up
 compose-up:
 	export $$(cat .env | xargs) && \
 	docker-compose up -d
+	sleep 1
 
 .PHONY: compose-down
 compose-down:
