@@ -44,18 +44,18 @@ func (Role) TableName() string {
 	return "roles"
 }
 
-type UserRole struct {
-	UserId uuid.UUID `gorm:"type:uuid;primaryKey"`
-	RoleId uuid.UUID `gorm:"type:uuid;primaryKey"`
-
-	CreatedAt time.Time `gorm:"column:created_at"`
-}
-
 func (r Role) String() string {
 	return fmt.Sprintf(
 		"Role{Name: %s}",
 		r.Name,
 	)
+}
+
+type UserRole struct {
+	UserId uuid.UUID `gorm:"type:uuid;primaryKey"`
+	RoleId uuid.UUID `gorm:"type:uuid;primaryKey"`
+
+	CreatedAt time.Time `gorm:"column:created_at"`
 }
 
 func (UserRole) TableName() string {
