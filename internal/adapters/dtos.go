@@ -56,6 +56,7 @@ type UserRole struct {
 	UserId uuid.UUID `gorm:"type:uuid;primaryKey"`
 	RoleId uuid.UUID `gorm:"type:uuid;primaryKey"`
 
+	Notes     string    `gorm:"column:notes"`
 	CreatedAt time.Time `gorm:"column:created_at"`
 }
 

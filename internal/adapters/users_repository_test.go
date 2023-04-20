@@ -31,27 +31,61 @@ func TestCreate(t *testing.T) {
 	usersRepo := adapters.NewUserRepository(dbConn(t))
 	rolesRepo := adapters.NewRoleRepository(dbConn(t))
 
-	userRole, err := rolesRepo.FindByName("user")
-	assert.NoError(t, err)
+	t.Run("without custom association data", func(t *testing.T) {
+		userRole, err := rolesRepo.FindByName("user")
+		assert.NoError(t, err)
 
-	jdoe := &adapters.User{
-		Id:        uuid.New(),
-		CreatedAt: time.Now().UTC().Round(time.Second),
-		FirstName: "John",
-		LastName:  "Doe",
-		Email:     "jdoe@test.local",
-		Roles:     []*adapters.Role{userRole},
-	}
+		jdoe := &adapters.User{
+			Id:        uuid.New(),
+			CreatedAt: time.Now().UTC().Round(time.Second),
+			FirstName: "John",
+			LastName:  "Doe",
+			Email:     "jdoe@test.local",
+			Roles:     []*adapters.Role{userRole},
+		}
 
-	_, err = usersRepo.Create(jdoe)
-	assert.NoError(t, err)
+		_, err = usersRepo.Create(jdoe)
+		assert.NoError(t, err)
 
-	loadedJdoe, err := usersRepo.FindById(jdoe.Id)
-	assert.NoError(t, err)
-	assert.Equal(t, jdoe.Id, loadedJdoe.Id)
+		loadedJdoe, err := usersRepo.FindById(jdoe.Id)
+		assert.NoError(t, err)
+		assert.Equal(t, jdoe.Id, loadedJdoe.Id)
 
-	err = usersRepo.Delete(jdoe)
-	assert.NoError(t, err)
+		err = usersRepo.Delete(jdoe)
+		assert.NoError(t, err)
+	})
+
+	t.Run("with custom association data set manually", func(t *testing.T) {
+		userRole, err := rolesRepo.FindByName("user")
+		assert.NoError(t, err)
+
+		jdoe := &adapters.User{
+			Id:         uuid.New(),
+			CreatedAt:  time.Now().UTC().Round(time.Second),
+			FirstName:  "John",
+			LastName:   "Doe",
+			Email:      "jdoe@test.local",
+			UsersRoles: []*adapters.UserRole{},
+		}
+
+		notes := "default role"
+		jdoe.UsersRoles = append(jdoe.UsersRoles, &adapters.UserRole{
+			UserId: jdoe.Id,
+			RoleId: userRole.Id,
+			Notes:  notes,
+		})
+
+		_, err = usersRepo.Create(jdoe)
+		assert.NoError(t, err)
+
+		loadedJdoe, err := usersRepo.FindById(jdoe.Id)
+		assert.NoError(t, err)
+		assert.Equal(t, jdoe.Id, loadedJdoe.Id)
+		assert.Equal(t, "default role", loadedJdoe.UsersRoles[0].Notes)
+
+		err = usersRepo.Delete(jdoe)
+		assert.NoError(t, err)
+	})
 }
 
 func dbConn(t *testing.T) *gorm.DB {
