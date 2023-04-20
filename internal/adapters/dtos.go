@@ -56,6 +56,9 @@ type UserRole struct {
 	UserId uuid.UUID `gorm:"type:uuid;primaryKey"`
 	RoleId uuid.UUID `gorm:"type:uuid;primaryKey"`
 
+	User *User `gorm:"foreignKey:UserId;references:Id"`
+	Role *Role `gorm:"foreignKey:RoleId;references:Id"`
+
 	Notes     string    `gorm:"column:notes"`
 	CreatedAt time.Time `gorm:"column:created_at"`
 }
@@ -66,7 +69,7 @@ func (UserRole) TableName() string {
 
 func (ur UserRole) String() string {
 	return fmt.Sprintf(
-		"UserRole{UserId: %s, RoleId: %s, CreatedAt: %s}",
-		ur.UserId, ur.RoleId, ur.CreatedAt,
+		"UserRole{UserId: %s, RoleId: %s, CreatedAt: %s, Notes: %s}",
+		ur.UserId, ur.RoleId, ur.CreatedAt, ur.Notes,
 	)
 }
