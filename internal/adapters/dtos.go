@@ -1,6 +1,7 @@
 package adapters
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -21,10 +22,13 @@ type User struct {
 }
 
 func (u User) String() string {
-	return fmt.Sprintf(
-		"User{Id: %s, CreatedAt: %s, FirstName: %s, LastName: %s, Email: %s, Roles: %s, UsersRoles: %s}",
-		u.Id, u.CreatedAt, u.FirstName, u.LastName, u.Email, u.Roles, u.UsersRoles,
-	)
+	// return fmt.Sprintf(
+	// 	"User{Id: %s, CreatedAt: %s, FirstName: %s, LastName: %s, Email: %s, Roles: %s, UsersRoles: %s}",
+	// 	u.Id, u.CreatedAt, u.FirstName, u.LastName, u.Email, u.Roles, u.UsersRoles,
+	// )
+
+	data, _ := json.MarshalIndent(u, "", "  ")
+	return string(data)
 }
 
 func (User) TableName() string {

@@ -14,6 +14,16 @@ import (
 	"gorm.io/gorm"
 )
 
+func TestFindById(t *testing.T) {
+	repo := adapters.NewUserRepository(dbConn(t))
+	user, err := repo.FindById(uuid.MustParse("00000000-0000-0000-0000-000000000001"))
+	assert.NoError(t, err)
+	assert.NotEmpty(t, user)
+	assert.NotEmpty(t, user.Roles)
+	assert.NotNil(t, user.UsersRoles)
+	fmt.Println(user)
+}
+
 func TestFindAll(t *testing.T) {
 	repo := adapters.NewUserRepository(dbConn(t))
 	users, err := repo.FindAll()
