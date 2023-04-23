@@ -20,6 +20,7 @@ func TestFindById(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotEmpty(t, user)
 	assert.NotEmpty(t, user.Roles)
+	assert.NotEmpty(t, user.Emails)
 	assert.NotNil(t, user.UsersRoles)
 	fmt.Println(user)
 }
@@ -33,7 +34,8 @@ func TestFindAll(t *testing.T) {
 	for _, user := range users {
 		assert.NotEmpty(t, user.Roles)
 		assert.NotNil(t, user.UsersRoles)
-		fmt.Println(user)
+		assert.NotEmpty(t, user.Emails)
+		// fmt.Println(user)
 	}
 }
 
@@ -41,7 +43,7 @@ func TestCreate(t *testing.T) {
 	usersRepo := adapters.NewUserRepository(dbConn(t))
 	rolesRepo := adapters.NewRoleRepository(dbConn(t))
 
-	t.Run("without custom association data", func(t *testing.T) {
+	t.Run("without roles association data", func(t *testing.T) {
 		userRole, err := rolesRepo.FindByName("user")
 		assert.NoError(t, err)
 
@@ -50,8 +52,15 @@ func TestCreate(t *testing.T) {
 			CreatedAt: time.Now().UTC().Round(time.Second),
 			FirstName: "John",
 			LastName:  "Doe",
-			Email:     "jdoe@test.local",
 			Roles:     []*adapters.Role{userRole},
+			Emails: []*adapters.Email{{
+				Id:        uuid.New(),
+				CreatedAt: time.Now().UTC().Round(time.Second),
+				UpdatedAt: time.Now().UTC().Round(time.Second),
+				Email:     "jdoe@test.local",
+				Verified:  false,
+				Principal: true,
+			}},
 		}
 
 		_, err = usersRepo.Create(jdoe)
@@ -60,12 +69,13 @@ func TestCreate(t *testing.T) {
 		loadedJdoe, err := usersRepo.FindById(jdoe.Id)
 		assert.NoError(t, err)
 		assert.Equal(t, jdoe.Id, loadedJdoe.Id)
+		assert.Equal(t, jdoe.Emails, loadedJdoe.Emails)
 
 		err = usersRepo.Delete(jdoe)
 		assert.NoError(t, err)
 	})
 
-	t.Run("with custom association data set manually", func(t *testing.T) {
+	t.Run("with roles association data set manually", func(t *testing.T) {
 		userRole, err := rolesRepo.FindByName("user")
 		assert.NoError(t, err)
 
@@ -74,7 +84,6 @@ func TestCreate(t *testing.T) {
 			CreatedAt:  time.Now().UTC().Round(time.Second),
 			FirstName:  "John",
 			LastName:   "Doe",
-			Email:      "jdoe@test.local",
 			UsersRoles: []*adapters.UserRole{},
 		}
 
@@ -97,7 +106,7 @@ func TestCreate(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	t.Run("with custom association data set automatically", func(t *testing.T) {
+	t.Run("with roles association data set automatically", func(t *testing.T) {
 		userRole, err := rolesRepo.FindByName("user")
 		assert.NoError(t, err)
 
@@ -106,7 +115,6 @@ func TestCreate(t *testing.T) {
 			CreatedAt:  time.Now().UTC().Round(time.Second),
 			FirstName:  "John",
 			LastName:   "Doe",
-			Email:      "jdoe@test.local",
 			UsersRoles: []*adapters.UserRole{},
 		}
 

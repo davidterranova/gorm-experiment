@@ -17,7 +17,7 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 func (r *UserRepository) FindAll() ([]*User, error) {
 	var users []*User
 
-	err := r.db.Preload("Roles").Preload("UsersRoles").Find(&users).Error
+	err := r.db.Preload("Roles").Preload("UsersRoles").Preload("Emails").Find(&users).Error
 
 	return users, err
 }
@@ -25,7 +25,6 @@ func (r *UserRepository) FindAll() ([]*User, error) {
 func (r *UserRepository) FindById(id uuid.UUID) (*User, error) {
 	var user User
 
-	// err := r.db.Preload("Roles").Preload("UsersRoles").Where("id = ?", id).First(&user).Error
 	err := r.db.Preload("UsersRoles.Role").Preload(clause.Associations).Where("id = ?", id).First(&user).Error
 
 	return &user, err

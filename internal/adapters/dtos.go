@@ -15,10 +15,11 @@ type User struct {
 
 	FirstName string `gorm:"column:first_name"`
 	LastName  string `gorm:"column:last_name"`
-	Email     string `gorm:"column:email"`
 
 	Roles      []*Role     `gorm:"many2many:users_roles;"`
 	UsersRoles []*UserRole `gorm:"foreignKey:UserId;references:Id"`
+
+	Emails []*Email `gorm:"foreignKey:UserId;references:Id"`
 }
 
 func (u User) String() string {
@@ -33,6 +34,22 @@ func (u User) String() string {
 
 func (User) TableName() string {
 	return "users"
+}
+
+type Email struct {
+	Id     uuid.UUID `gorm:"type:uuid;primaryKey"`
+	UserId uuid.UUID `gorm:"type:uuid"`
+
+	CreatedAt time.Time `gorm:"column:created_at"`
+	UpdatedAt time.Time `gorm:"column:updated_at"`
+
+	Email     string `gorm:"column:email"`
+	Verified  bool   `gorm:"column:verified"`
+	Principal bool   `gorm:"column:principal"`
+}
+
+func (Email) TableName() string {
+	return "emails"
 }
 
 type Role struct {
